@@ -103,8 +103,8 @@ void init_graph(bool M[][NO_OF_VERTICES], unsigned int size, adj_list_t **g)
 	unsigned int i, j;
 	vertex_t *v = NULL;
 
-	*g					= (adj_list_t *)malloc(sizeof(adj_list_t));
-	(*g)->graph			= (list_t *)malloc(size * (sizeof(list_t)));
+	*g			= (adj_list_t *)malloc(sizeof(adj_list_t));
+	(*g)->graph		= (list_t *)malloc(size * (sizeof(list_t)));
 	(*g)->params		= (vparams_t *)malloc(size * sizeof(vparams_t));
 	(*g)->bfs_params	= (bfs_params_t *)malloc(sizeof(bfs_params_t));
 	(*g)->sub_graph		= (adj_list_t *)malloc(sizeof(adj_list_t));
