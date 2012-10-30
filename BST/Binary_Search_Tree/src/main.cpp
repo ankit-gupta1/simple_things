@@ -25,7 +25,7 @@ int main()
 	cout<<"\nHeight of tree : "<<tree_height_iterative(tree)<<"\n";
 
 	morris_traversal(tree);
-	inorder_tree_walk_iterative(tree);
+	//inorder_tree_walk_iterative(tree);
 
 	lowest_common_ancestor(tree, test_array[37], test_array[78]);
 
