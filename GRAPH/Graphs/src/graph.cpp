@@ -42,6 +42,19 @@ void populate_matrix_undirected(bool M[][NO_OF_VERTICES], unsigned int size)
 	}
 }
 
+void populate_matrix_directed(bool M[][NO_OF_VERTICES], unsigned int size)
+{
+	unsigned int i, j;
+
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++) {
+			srand(time(NULL) + i * j * 7 + (1900 *j));
+			if (!M[i][j])
+				M[i][j] = (rand() % 2) ? true : false;
+		}
+	}
+}
+
 void show_matrix(bool M[][NO_OF_VERTICES], unsigned int size)
 {
 	unsigned int i, j;
