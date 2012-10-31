@@ -23,6 +23,7 @@ int main()
 	show_graph(graph);
 
 	bfs_traversal(graph);
+	dfs_traversal(graph);
 	return 0;
 }
 

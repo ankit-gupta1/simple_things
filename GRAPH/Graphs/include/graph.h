@@ -8,7 +8,7 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-#define NO_OF_VERTICES 10
+#define NO_OF_VERTICES 15
 
 typedef enum {
 	WHITE,
@@ -32,12 +32,24 @@ typedef struct {
 	color_t			color;
 	unsigned int	distance;
 	int				pred_index;
-} vparams_t;
+} bfs_vparams_t;
 
 typedef struct {
 	int				*bfs_trav;
 	queue_t			*bfs_q;
 } bfs_params_t;
+
+typedef struct {
+	color_t			color;
+	unsigned int	discovery_time;
+	unsigned int	finish_time;
+	int 			pred_index;
+} dfs_vparams_t;
+
+typedef struct {
+	int				*dfs_trav;
+	queue_t			*dfs_q;
+} dfs_params_t;
 
 struct list_t {
 	vertex_t		*head;
@@ -47,8 +59,10 @@ struct list_t {
 
 struct adj_list_t {
 	list_t			*graph;
-	vparams_t		*params;
+	bfs_vparams_t	*bfs_vparams;
 	bfs_params_t	*bfs_params;
+	dfs_vparams_t	*dfs_vparams;
+	dfs_params_t	*dfs_params;
 	unsigned int	cnctd_cmpnts;
 	unsigned int	size;
 	adj_list_t		*sub_graph;
@@ -63,5 +77,8 @@ void show_graph						(adj_list_t *g);
 void breadth_first_search			(adj_list_t *g);
 void bfs_traversal					(adj_list_t *g);
 void print_bfs_paths				(adj_list_t *g);
+void depth_first_search				(adj_list_t *g);
+void dfs_traversal					(adj_list_t *g);
+void print_dfs_paths				(adj_list_t *g);
 
 #endif /* GRAPH_H_ */
