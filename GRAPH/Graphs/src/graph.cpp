@@ -288,6 +288,78 @@ void bfs_traversal(adj_list_t *g)
 	}
 }
 
+void bfs_parameterized(adj_list_t *g, unsigned int init_point)
+{
+	unsigned int s, i, j;
+	int u, v;
+	queue_t *q = NULL;
+	queue_t *qt = NULL;
+	int *trav = NULL;
+	vertex_t *v_v = NULL;
+	g->cnctd_cmpnts = 0;
+
+	/*
+	 * Randomly pick any initial point in a graph.
+	 */
+
+	s = init_point;
+
+	for (i = 0; i < g->size; i++) {
+		g->bfs_vparams[i].color = WHITE;
+		g->bfs_vparams[i].distance = (~(1 << 31));
+		g->bfs_vparams[i].pred_index = 1 << 31;
+	}
+
+	g->bfs_vparams[s].color = GRAY;
+	g->bfs_vparams[s].distance = 0;
+	g->bfs_vparams[s].pred_index = 1 << 31;
+
+	create_queue(&q);
+	enqueue(q, s);
+
+	qt = g->bfs_params->bfs_q;
+	trav = g->bfs_params->bfs_trav;
+	i = 0;
+
+	while (q->front || (i < g->size)) {
+		u = dequeue(q);
+		if (u > -1) {
+			v_v = g->graph[u].head;
+			trav[i++] = u;
+
+			while (v_v) {
+				v = v_v->val;
+				if (g->bfs_vparams[v].color == WHITE) {
+					g->bfs_vparams[v].color = GRAY;
+					g->bfs_vparams[v].distance = g->bfs_vparams[u].distance + 1;
+					g->bfs_vparams[v].pred_index = u;
+					enqueue(q, v);
+				}
+
+				v_v = v_v->next;
+			}
+			g->bfs_vparams[u].color = BLACK;
+		} else {
+			for (j = 0; j < g->size; j++)
+				if (g->bfs_vparams[j].color == WHITE)
+					break;
+
+			g->bfs_vparams[j].color = GRAY;
+			g->bfs_vparams[j].distance = 0;
+			g->bfs_vparams[j].pred_index = 1 << 31;
+
+			enqueue(q, j);
+			enqueue(qt, i);
+			g->cnctd_cmpnts++;
+		}
+	}
+
+	enqueue(qt, g->size);
+
+	qt = NULL;
+	free_queue(&q);
+}
+
 void dfs_visit(adj_list_t *g, unsigned int u)
 {
 	unsigned int v;
@@ -392,4 +464,34 @@ void dfs_traversal(adj_list_t *g)
 		depth_first_search(g);
 		print_dfs_paths(g);
 	}
+}
+
+void diameter(adj_list_t *g)
+{
+	unsigned int i = 0;
+	unsigned int init_point;
+	unsigned int end_point;
+	unsigned int max_distance = 0;
+	unsigned int temp;
+
+	if (!g)
+		return;
+
+	breadth_first_search(g);
+	if (g->cnctd_cmpnts > 0)
+		return;
+
+	for (i = 0; i < g->size; i++) {
+		bfs_parameterized(g, i);
+		temp = g->bfs_vparams[g->bfs_params->bfs_trav[g->size - 1]].distance;
+		if (temp > max_distance) {
+			max_distance = temp;
+			init_point = i;
+			end_point = g->bfs_params->bfs_trav[g->size - 1];
+		}
+	}
+
+	cout<<"\nDiameter of Graph is : "<<max_distance<<endl;
+	cout<<"\nInitial Point        : "<<init_point<<endl;
+	cout<<"\nEnd Point            : "<<end_point<<endl;
 }

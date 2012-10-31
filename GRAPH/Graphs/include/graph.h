@@ -8,7 +8,7 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-#define NO_OF_VERTICES 15
+#define NO_OF_VERTICES 10
 
 typedef enum {
 	WHITE,
@@ -69,6 +69,7 @@ struct adj_list_t {
 };
 
 void populate_matrix_undirected		(bool m[][NO_OF_VERTICES], unsigned int size);
+void populate_matrix_directed		(bool M[][NO_OF_VERTICES], unsigned int size);
 void show_matrix 					(bool m[][NO_OF_VERTICES], unsigned int size);
 void init_matrix					(bool m[][NO_OF_VERTICES], unsigned int size);
 void init_graph						(bool m[][NO_OF_VERTICES], unsigned int size, adj_list_t **g);
@@ -80,5 +81,6 @@ void print_bfs_paths				(adj_list_t *g);
 void depth_first_search				(adj_list_t *g);
 void dfs_traversal					(adj_list_t *g);
 void print_dfs_paths				(adj_list_t *g);
+void diameter						(adj_list_t *g);
 
 #endif /* GRAPH_H_ */

@@ -30,13 +30,14 @@ int main()
 
 	bfs_traversal(graph_u);
 	dfs_traversal(graph_u);
+	diameter(graph_u);
 
 	/*
 	 * Operations on Directed Graph.
 	 */
 
 	init_matrix(adj_matrix_d, NO_OF_VERTICES);
-	populate_matrix_undirected(adj_matrix_d, NO_OF_VERTICES);
+	populate_matrix_directed(adj_matrix_d, NO_OF_VERTICES);
 	show_matrix(adj_matrix_d, NO_OF_VERTICES);
 
 	init_graph(adj_matrix_d, NO_OF_VERTICES, &graph_d);
@@ -44,6 +45,7 @@ int main()
 
 	bfs_traversal(graph_d);
 	dfs_traversal(graph_d);
+	diameter(graph_d);
 
 	return 0;
 }
