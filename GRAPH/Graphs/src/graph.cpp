@@ -77,6 +77,17 @@ void create_vertex(vertex_t **v, int val)
 	}
 }
 
+void create_edge(edge_t **e, int u, int v)
+{
+	if (!*e) {
+		*e = new edge_t;
+		(*e)->u = u;
+		(*e)->v = u;
+		(*e)->edge_type = NIL;
+		(*e)->next = NULL;
+	}
+}
+
 void create_list(list_t **list)
 {
 	if (!*list) {
@@ -108,6 +119,26 @@ void append_vertex(list_t *list, vertex_t *v)
 	list->neighbours++;
 }
 
+void append_edge(list_edge_t *list, edge_t *e)
+{
+	edge_t *curr = NULL;
+
+	if (!list)
+		return;
+
+	if (!e)
+		return;
+
+	if (!list->head) {
+		list->head = e;
+		list->tail = e;
+	} else {
+		curr = list->tail;
+		curr->next = e;
+		list->tail = e;
+	}
+}
+
 void init_bfs_params(bfs_params_t **bfs_params, int size)
 {
 	(*bfs_params)->bfs_trav = new int[size];
@@ -126,9 +157,11 @@ void init_graph(bool M[][NO_OF_VERTICES], unsigned int size, adj_list_t **g)
 {
 	unsigned int i, j;
 	vertex_t *v = NULL;
+	edge_t *e = NULL;
 
 	*g			= (adj_list_t *)malloc(sizeof(adj_list_t));
 	(*g)->graph		= (list_t *)malloc(size * (sizeof(list_t)));
+	(*g)->edge		= (list_edge_t *)malloc(size * sizeof(list_edge_t));
 	(*g)->bfs_vparams	= (bfs_vparams_t *)malloc(size * sizeof(bfs_vparams_t));
 	(*g)->bfs_params	= (bfs_params_t *)malloc(sizeof(bfs_params_t));
 	(*g)->dfs_vparams	= (dfs_vparams_t *)malloc(size * sizeof(dfs_vparams_t));
@@ -142,11 +175,17 @@ void init_graph(bool M[][NO_OF_VERTICES], unsigned int size, adj_list_t **g)
 		(*g)->graph[i].head = NULL;
 		(*g)->graph[i].tail = NULL;
 		(*g)->graph[i].neighbours = 0;
+		(*g)->edge[i].head = NULL;
+		(*g)->edge[i].tail = NULL;
+
 		for (j = 0; j < size; j++) {
 			if (M[i][j]) {
 				create_vertex(&v, j);
+				create_edge(&e, i, j);
 				append_vertex(&(*g)->graph[i], v);
+				append_edge(&(*g)->edge[i], e);
 				v = NULL;
+				e = NULL;
 			}
 		}
 	}
@@ -168,6 +207,24 @@ void show_graph(adj_list_t *g)
 		while (v) {
 			cout<<" -> "<<v->val;
 			v = v->next;
+		}
+		cout<<endl;
+	}
+}
+
+void show_edge(adj_list_t *g)
+{
+	unsigned int i;
+	edge_t *e = NULL;
+
+	cout<<"\nEdges of Graph are :\n";
+	for (i = 0; i < g->size; i++) {
+		cout<<"\n["<<i<<"]";
+		e = g->edge[i].head;
+
+		while (e) {
+			cout<<" -> "<<e->edge_type;
+			e = e->next;
 		}
 		cout<<endl;
 	}
@@ -494,4 +551,46 @@ void diameter(adj_list_t *g)
 	cout<<"\nDiameter of Graph is : "<<max_distance<<endl;
 	cout<<"\nInitial Point        : "<<init_point<<endl;
 	cout<<"\nEnd Point            : "<<end_point<<endl;
+}
+
+/*
+ * Graph analyser analyses the edges of a graph.
+ * This analysis is done on the basis of discovering
+ * time and finishing time of vertices during a depth
+ * first search traversal. It classifies the edges as
+ * per TREE, BACK or CROSS edges.
+ */
+
+void graph_analyzer(adj_list_t *g)
+{
+	unsigned int u;
+	unsigned int v;
+	vertex_t *v_v = NULL;
+	edge_t *e = NULL;
+	dfs_vparams_t *dfs_param_v = NULL;
+
+	depth_first_search(g);
+	dfs_param_v = g->dfs_vparams;
+	for (u = 0; u < g->size; u++) {
+		v_v = g->graph[u].head;
+		e = g->edge[u].head;
+		while (v_v) {
+			v = v_v->val;
+			if ((dfs_param_v[u].discovery_time < dfs_param_v[v].discovery_time) &&
+				(dfs_param_v[v].discovery_time < dfs_param_v[v].finish_time) &&
+				(dfs_param_v[v].finish_time < dfs_param_v[u].finish_time))
+				e->edge_type = TREE;
+			else if ((dfs_param_v[v].discovery_time < dfs_param_v[u].discovery_time) &&
+					(dfs_param_v[u].discovery_time < dfs_param_v[u].finish_time) &&
+					(dfs_param_v[u].finish_time < dfs_param_v[v].finish_time))
+					e->edge_type = BACK;
+			else if ((dfs_param_v[v].discovery_time < dfs_param_v[v].finish_time) &&
+					(dfs_param_v[v].finish_time < dfs_param_v[u].discovery_time) &&
+					(dfs_param_v[u].discovery_time < dfs_param_v[u].finish_time))
+					e->edge_type = CROSS;
+
+			v_v = v_v->next;
+			e = e->next;
+		}
+	}
 }

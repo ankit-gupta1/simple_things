@@ -16,16 +16,30 @@ typedef enum {
 	BLACK
 } color_t;
 
+typedef enum {
+	TREE,
+	BACK,
+	CROSS,
+	NIL
+} edge_type_t;
+
 struct vertex_t {
-	int				val;
+	int			val;
 	vertex_t		*next;
+};
+
+struct edge_t {
+	edge_type_t		edge_type;
+	unsigned int		u;
+	unsigned int		v;
+	edge_t			*next;
 };
 
 typedef vertex_t vq_t;
 
 typedef struct {
-	vq_t *front; /*bottom*/
-	vq_t *back; /*top*/
+	vq_t			*front; /*bottom*/
+	vq_t			*back; /*top*/
 } queue_t;
 
 typedef struct {
@@ -57,8 +71,14 @@ struct list_t {
 	unsigned int	neighbours;
 };
 
+struct list_edge_t {
+	edge_t			*head;
+	edge_t			*tail;
+};
+
 struct adj_list_t {
 	list_t			*graph;
+	list_edge_t		*edge;
 	bfs_vparams_t	*bfs_vparams;
 	bfs_params_t	*bfs_params;
 	dfs_vparams_t	*dfs_vparams;
@@ -74,6 +94,7 @@ void show_matrix 					(bool m[][NO_OF_VERTICES], unsigned int size);
 void init_matrix					(bool m[][NO_OF_VERTICES], unsigned int size);
 void init_graph						(bool m[][NO_OF_VERTICES], unsigned int size, adj_list_t **g);
 void show_graph						(adj_list_t *g);
+void show_edge						(adj_list_t *g);
 
 void breadth_first_search			(adj_list_t *g);
 void bfs_traversal					(adj_list_t *g);
@@ -82,5 +103,6 @@ void depth_first_search				(adj_list_t *g);
 void dfs_traversal					(adj_list_t *g);
 void print_dfs_paths				(adj_list_t *g);
 void diameter						(adj_list_t *g);
+void graph_analyzer					(adj_list_t *g);
 
 #endif /* GRAPH_H_ */

@@ -47,6 +47,9 @@ int main()
 	dfs_traversal(graph_d);
 	diameter(graph_d);
 
+	graph_analyzer(graph_d);
+	show_edge(graph_d);
+
 	return 0;
 }
 
