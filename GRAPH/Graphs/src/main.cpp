@@ -49,6 +49,7 @@ int main()
 
 	graph_analyzer(graph_d);
 	show_edge(graph_d);
+	show_graph_with_weight(graph_d);
 
 	return 0;
 }

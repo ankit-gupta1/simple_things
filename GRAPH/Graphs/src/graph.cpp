@@ -81,8 +81,10 @@ void create_edge(edge_t **e, int u, int v)
 {
 	if (!*e) {
 		*e = new edge_t;
+		srand(time(NULL) + u * u * 7 + 100 *v);
 		(*e)->u = u;
-		(*e)->v = u;
+		(*e)->v = v;
+		(*e)->w = 1 + (rand() % 20);
 		(*e)->edge_type = NIL;
 		(*e)->next = NULL;
 	}
@@ -207,6 +209,27 @@ void show_graph(adj_list_t *g)
 		while (v) {
 			cout<<" -> "<<v->val;
 			v = v->next;
+		}
+		cout<<endl;
+	}
+}
+
+void show_graph_with_weight(adj_list_t *g)
+{
+	unsigned int i;
+	vertex_t *v = NULL;
+	edge_t *e = NULL;
+
+	cout<<"\nAdjacency list of weighted graph is :\n";
+	for (i = 0; i < g->size; i++) {
+		cout<<"\n["<<i<<"]";
+		v = g->graph[i].head;
+		e = g->edge[i].head;
+
+		while (v) {
+			cout<<" -> "<<v->val<<"("<<e->w<<")";
+			v = v->next;
+			e = e->next;
 		}
 		cout<<endl;
 	}

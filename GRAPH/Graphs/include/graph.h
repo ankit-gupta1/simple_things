@@ -28,10 +28,16 @@ struct vertex_t {
 	vertex_t		*next;
 };
 
+/*
+ * Structure edge is like this.
+ * 		u----(w)----v
+ */
+
 struct edge_t {
 	edge_type_t		edge_type;
 	unsigned int		u;
 	unsigned int		v;
+	unsigned int		w;
 	edge_t			*next;
 };
 
@@ -95,6 +101,7 @@ void init_matrix					(bool m[][NO_OF_VERTICES], unsigned int size);
 void init_graph						(bool m[][NO_OF_VERTICES], unsigned int size, adj_list_t **g);
 void show_graph						(adj_list_t *g);
 void show_edge						(adj_list_t *g);
+void show_graph_with_weight			(adj_list_t *g);
 
 void breadth_first_search			(adj_list_t *g);
 void bfs_traversal					(adj_list_t *g);
