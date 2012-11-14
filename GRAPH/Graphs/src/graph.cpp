@@ -12,6 +12,7 @@
 #include <iomanip>
 #include "../include/graph.h"
 #include "../include/queue.h"
+#include "../include/set.h"
 
 using namespace std;
 
@@ -26,6 +27,39 @@ void init_matrix(bool M[][NO_OF_VERTICES], unsigned int size)
 		for (j = 0; j < size; j++) {
 			M[i][j] = false;
 		}
+	}
+}
+
+void init_weight(unsigned int W[][NO_OF_VERTICES], unsigned int size)
+{
+	unsigned int i, j;
+
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++) {
+			W[i][j] = 0;
+		}
+	}
+}
+
+void create_matrix(bool M[][NO_OF_VERTICES], list_edge_t *list)
+{
+	edge_t *e = NULL;
+	e = list->head;
+	while (e) {
+		M[e->u][e->v] = true;
+		M[e->v][e->u] = true;
+		e = e->next;
+	}
+}
+
+void create_weight(unsigned int W[][NO_OF_VERTICES], list_edge_t *list)
+{
+	edge_t *e = NULL;
+	e = list->head;
+	while (e) {
+		W[e->u][e->v] = e->w;
+		W[e->v][e->u] = e->w;
+		e = e->next;
 	}
 }
 
@@ -51,6 +85,37 @@ void populate_matrix_directed(bool M[][NO_OF_VERTICES], unsigned int size)
 			srand(time(NULL) + i * j * 7 + (1900 *j));
 			if (!M[i][j])
 				M[i][j] = (rand() % 2) ? true : false;
+		}
+	}
+}
+
+void populate_weight(bool M[][NO_OF_VERTICES],
+		unsigned int W[NO_OF_VERTICES][NO_OF_VERTICES],
+		unsigned int size, bool directed)
+{
+	unsigned int i, j;
+
+	if (!directed) {
+		for (i = 0; i < size; i++) {
+			for (j = i; j < size; j++) {
+				srand(time(NULL) + i * j * 7 + 100 * j);
+				if (M[i][j])
+					W[i][j] = 1 + (rand() % 20);
+				else
+					W[i][j] = 0;
+
+				W[j][i] = W[i][j];
+			}
+		}
+	} else {
+		for (i = 0; i < size; i++) {
+			for (j = 0; j < size; j++) {
+				srand(time(NULL) + i * j * 7 + 100 * j);
+				if (M[i][j])
+					W[i][j] = 1 + (rand() % 20);
+				else
+					W[i][j] = 0;
+			}
 		}
 	}
 }
@@ -85,6 +150,18 @@ void create_edge(edge_t **e, int u, int v)
 		(*e)->u = u;
 		(*e)->v = v;
 		(*e)->w = 1 + (rand() % 20);
+		(*e)->edge_type = NIL;
+		(*e)->next = NULL;
+	}
+}
+
+void create_edge_undirected(edge_t **e, int u, int v, int w)
+{
+	if (!*e) {
+		*e = new edge_t;
+		(*e)->u = u;
+		(*e)->v = v;
+		(*e)->w = w;
 		(*e)->edge_type = NIL;
 		(*e)->next = NULL;
 	}
@@ -155,7 +232,9 @@ void init_dfs_params(dfs_params_t **dfs_params, int size)
 	create_queue(&(*dfs_params)->dfs_q);
 }
 
-void init_graph(bool M[][NO_OF_VERTICES], unsigned int size, adj_list_t **g)
+void init_graph(bool M[][NO_OF_VERTICES],
+		unsigned int W[NO_OF_VERTICES][NO_OF_VERTICES],
+		unsigned int size, adj_list_t **g)
 {
 	unsigned int i, j;
 	vertex_t *v = NULL;
@@ -183,8 +262,8 @@ void init_graph(bool M[][NO_OF_VERTICES], unsigned int size, adj_list_t **g)
 		for (j = 0; j < size; j++) {
 			if (M[i][j]) {
 				create_vertex(&v, j);
-				create_edge(&e, i, j);
 				append_vertex(&(*g)->graph[i], v);
+				create_edge_undirected(&e, i, j, W[i][j]);
 				append_edge(&(*g)->edge[i], e);
 				v = NULL;
 				e = NULL;
@@ -241,15 +320,29 @@ void show_edge(adj_list_t *g)
 	edge_t *e = NULL;
 
 	cout<<"\nEdges of Graph are :\n";
+	cout<<setw(2)<<"u"<<setw(2)<<"v"<<setw(4)<<"w"<<endl;
 	for (i = 0; i < g->size; i++) {
-		cout<<"\n["<<i<<"]";
 		e = g->edge[i].head;
 
 		while (e) {
-			cout<<" -> "<<e->edge_type;
+			cout<<setw(2)<<e->u<<setw(2)<<e->v<<setw(4)<<e->w<<endl;
 			e = e->next;
 		}
-		cout<<endl;
+	}
+}
+
+void show_edge_list(adj_list_t *g, edge_t *e)
+{
+	unsigned int i;
+	unsigned int total_edges = 0;
+
+	for (i = 0; i < g->size; i++)
+		total_edges += g->graph[i].neighbours;
+
+	cout<<"\nEdges of Graph from list are :\n";
+	cout<<setw(2)<<"u"<<setw(2)<<"v"<<setw(4)<<"w"<<endl;
+	for (i = 0; i < total_edges; i++) {
+		cout<<setw(2)<<e[i].u<<setw(2)<<e[i].v<<setw(4)<<e[i].w<<endl;
 	}
 }
 
@@ -616,4 +709,115 @@ void graph_analyzer(adj_list_t *g)
 			e = e->next;
 		}
 	}
+}
+
+void swap(edge_t &a, edge_t &b)
+{
+	edge_t t;
+	t = a;
+	a = b;
+	b = t;
+}
+
+int partition(edge_t *e, int p, int r)
+{
+    int right_most, pivot, j;
+
+    right_most = e[r].w;
+    pivot = p - 1;
+    for (j = p; j < r; j++) {
+        if (int(e[j].w) <= right_most) {
+            pivot++;
+            swap(e[pivot], e[j]);
+        }
+    }
+    swap(e[pivot + 1], e[r]);
+
+    return pivot + 1;
+}
+
+void quicksort(edge_t *e, int p, int r)
+{
+    int pivot;
+
+    if (p < r) {
+        pivot = partition(e, p, r);
+        quicksort(e, p, pivot - 1);
+        quicksort(e, pivot + 1, r);
+    }
+}
+
+void sort_edges(adj_list_t *g, edge_t *e)
+{
+	unsigned int total_edges = 0;
+	unsigned int i;
+	unsigned int u = 0;
+	edge_t *et = NULL;
+	for (i = 0; i < g->size; i++)
+		total_edges += g->graph[i].neighbours;
+
+	for (i = 0; i < g->size; i++) {
+		et = g->edge[i].head;
+		while (et) {
+			e[u].u = et->u;
+			e[u].v = et->v;
+			e[u].w = et->w;
+			et = et->next;
+			u++;
+		}
+	}
+
+	//show_edge_list(g, e);
+	quicksort(e, int(0), int(total_edges - 1));
+	//show_edge_list(g, e);
+}
+
+adj_list_t * mst_kruskal(adj_list_t *g)
+{
+	unsigned int total_edges = 0;
+	unsigned int i;
+	adj_list_t *mst = NULL;
+	bool adj_matrix_mst[NO_OF_VERTICES][NO_OF_VERTICES];
+	unsigned int weight_mst[NO_OF_VERTICES][NO_OF_VERTICES];
+	edge_t *e = NULL;
+	edge_t *temp = NULL;
+	list_edge_t *mst_e = NULL;
+	universal_set_t u;
+
+	dfs_traversal(g);
+	if (g->cnctd_cmpnts > 1)
+		return NULL;
+
+	init_set(u, g);
+	for (i = 0; i < g->size; i++)
+		total_edges += g->graph[i].neighbours;
+
+	e = (edge_t *)malloc(total_edges * sizeof(edge_t));
+	sort_edges(g, e);
+
+	mst_e = (list_edge_t *)malloc(sizeof(list_edge_t));
+	mst_e->head = NULL;
+	mst_e->tail = NULL;
+
+	for (i = 0; i < total_edges; i++) {
+		if (find_set(u, e[i].u) != find_set(u, e[i].v)) {
+			temp = new edge_t;
+			temp->u = e[i].u;
+			temp->v = e[i].v;
+			temp->w = e[i].w;
+			temp->next = NULL;
+			append_edge(mst_e, temp);
+			temp = NULL;
+			union_set(u, e[i].u, e[i].v);
+		}
+	}
+
+	init_matrix(adj_matrix_mst, g->size);
+	init_weight(weight_mst, g->size);
+	create_matrix(adj_matrix_mst, mst_e);
+	create_weight(weight_mst, mst_e);
+	show_matrix(adj_matrix_mst, NO_OF_VERTICES);
+	init_graph(adj_matrix_mst, weight_mst, g->size, &mst);
+
+	return mst;
 }

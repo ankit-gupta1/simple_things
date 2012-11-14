@@ -8,7 +8,7 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-#define NO_OF_VERTICES 10
+#define NO_OF_VERTICES 9
 
 typedef enum {
 	WHITE,
@@ -50,24 +50,24 @@ typedef struct {
 
 typedef struct {
 	color_t			color;
-	unsigned int	distance;
-	int				pred_index;
+	unsigned int		distance;
+	int			pred_index;
 } bfs_vparams_t;
 
 typedef struct {
-	int				*bfs_trav;
+	int			*bfs_trav;
 	queue_t			*bfs_q;
 } bfs_params_t;
 
 typedef struct {
 	color_t			color;
-	unsigned int	discovery_time;
-	unsigned int	finish_time;
-	int 			pred_index;
+	unsigned int		discovery_time;
+	unsigned int		finish_time;
+	int			pred_index;
 } dfs_vparams_t;
 
 typedef struct {
-	int				*dfs_trav;
+	int			*dfs_trav;
 	queue_t			*dfs_q;
 } dfs_params_t;
 
@@ -82,34 +82,50 @@ struct list_edge_t {
 	edge_t			*tail;
 };
 
-struct adj_list_t {
-	list_t			*graph;
-	list_edge_t		*edge;
-	bfs_vparams_t	*bfs_vparams;
-	bfs_params_t	*bfs_params;
-	dfs_vparams_t	*dfs_vparams;
-	dfs_params_t	*dfs_params;
-	unsigned int	cnctd_cmpnts;
-	unsigned int	size;
-	adj_list_t		*sub_graph;
+struct universal_set_t {
+	list_t			set_list[NO_OF_VERTICES];
+	unsigned int		set_addr[NO_OF_VERTICES];
+	unsigned int		size;
 };
 
-void populate_matrix_undirected		(bool m[][NO_OF_VERTICES], unsigned int size);
-void populate_matrix_directed		(bool M[][NO_OF_VERTICES], unsigned int size);
-void show_matrix 					(bool m[][NO_OF_VERTICES], unsigned int size);
-void init_matrix					(bool m[][NO_OF_VERTICES], unsigned int size);
-void init_graph						(bool m[][NO_OF_VERTICES], unsigned int size, adj_list_t **g);
-void show_graph						(adj_list_t *g);
-void show_edge						(adj_list_t *g);
-void show_graph_with_weight			(adj_list_t *g);
+struct adj_list_t {
+	adj_list_t		*sub_graph;
+	list_t			*graph;
+	list_edge_t		*edge;
+	bfs_vparams_t		*bfs_vparams;
+	bfs_params_t		*bfs_params;
+	dfs_vparams_t		*dfs_vparams;
+	dfs_params_t		*dfs_params;
+	bool			is_directed;
+	unsigned int		cnctd_cmpnts;
+	unsigned int		size;
+};
 
-void breadth_first_search			(adj_list_t *g);
-void bfs_traversal					(adj_list_t *g);
-void print_bfs_paths				(adj_list_t *g);
-void depth_first_search				(adj_list_t *g);
-void dfs_traversal					(adj_list_t *g);
-void print_dfs_paths				(adj_list_t *g);
-void diameter						(adj_list_t *g);
-void graph_analyzer					(adj_list_t *g);
+void populate_matrix_undirected	(bool m[][NO_OF_VERTICES], unsigned int size);
+void populate_matrix_directed		(bool M[][NO_OF_VERTICES], unsigned int size);
+void show_matrix			(bool m[][NO_OF_VERTICES], unsigned int size);
+void init_matrix			(bool m[][NO_OF_VERTICES], unsigned int size);
+void init_graph			(bool m[][NO_OF_VERTICES],
+					unsigned int W[NO_OF_VERTICES][NO_OF_VERTICES],
+					unsigned int size, adj_list_t **g);
+void show_graph			(adj_list_t *g);
+void show_edge				(adj_list_t *g);
+void show_graph_with_weight		(adj_list_t *g);
+void sort_edges			(adj_list_t *g, edge_t *e);
+void append_vertex			(list_t *list, vertex_t *v);
+void create_vertex			(vertex_t **v, int val);
+void populate_weight			(bool M[][NO_OF_VERTICES],
+					unsigned int W[NO_OF_VERTICES][NO_OF_VERTICES],
+					unsigned int size, bool directed);
+
+void breadth_first_search		(adj_list_t *g);
+void bfs_traversal			(adj_list_t *g);
+void print_bfs_paths			(adj_list_t *g);
+void depth_first_search		(adj_list_t *g);
+void dfs_traversal			(adj_list_t *g);
+void print_dfs_paths			(adj_list_t *g);
+void diameter				(adj_list_t *g);
+void graph_analyzer			(adj_list_t *g);
+adj_list_t *mst_kruskal		(adj_list_t *g);
 
 #endif /* GRAPH_H_ */

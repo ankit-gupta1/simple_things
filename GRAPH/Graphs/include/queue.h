@@ -17,5 +17,4 @@ int dequeue(queue_t *queue);
 void show_queue(queue_t *queue);
 int queue_front(queue_t *queue);
 
-
 #endif /* QUEUE_H_ */
