@@ -195,6 +195,11 @@ assembly_line_t *factory_t::get_assembly_lines ()
 	return this->assembly_lines;
 }
 
+/*
+ * Core Algorithm.
+ * Uses dynamic programming approach.
+ */
+
 void factory_t::find_optimal_route ()
 {
 	U32 i, j, k;
