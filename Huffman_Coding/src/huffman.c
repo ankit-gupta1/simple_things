@@ -314,6 +314,21 @@ void printHuffmanTable (huffmanCode_t *huffmanCode)
 
 }
 
+void dumpHuffmanTable (huffmanCode_t *huffmanCode, char *fileName)
+{
+    U32 itr;
+    FILE *fp;
+
+    fp = fopen(fileName, "w");
+
+    LOG("Dumping Huffman Table");
+    for (itr = 32; itr < HEAP_SIZE - 2; itr++)
+        fprintf(fp, "Symbol %c  Code %s \n", huffmanCode[itr].symbol,
+            huffmanCode[itr].code);
+
+    fclose(fp);
+}
+
 void printCharDataTable (charData_t *dataTable)
 {
     U32 itr;
@@ -322,6 +337,21 @@ void printCharDataTable (charData_t *dataTable)
     for (itr = 0; itr < HEAP_SIZE; itr++)
         LOG("Symbol %c  index %llu", dataTable[itr].symbol,
             dataTable[itr].index);
+}
+
+void dumpCharDataTable (charData_t *dataTable, char *fileName)
+{
+    U32 itr;
+    FILE *fp;
+
+    fp = fopen(fileName, "w");
+
+    LOG("Dumping CharData Table");
+    for (itr = 32; itr < HEAP_SIZE - 2; itr++)
+        fprintf(fp, "Symbol %c  index %llu \n", dataTable[itr].symbol,
+            dataTable[itr].index);
+
+    fclose(fp);
 }
 
 void evaluateCompression (charData_t *dataTable, huffmanCode_t *huffmanCode)

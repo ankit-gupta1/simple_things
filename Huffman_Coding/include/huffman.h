@@ -43,6 +43,7 @@ errCode_t       charDataTableInit       (charData_t **dataTable);
 void            charDataTableDeInit     (charData_t **dataTable);
 errCode_t       populateCharDataTable   (charData_t *datatable, char *filename);
 void            printCharDataTable      (charData_t *dataTable);
+void 			dumpCharDataTable 		(charData_t *dataTable, char *fileName);
 heap_t*         charDataBuildMinHeap    (charData_t *dataTable);
 errCode_t       createHuffmanNode       (huffmanNode_t **huffmanNode);
 huffmanNode_t*  createHuffmanForest     (heap_t *heap);
@@ -50,6 +51,8 @@ errCode_t       initHuffmanCodeTable    (huffmanCode_t **huffmanCodeTable);
 void            createHuffmanTable      (huffmanCode_t *huffmanCode,
                                         huffmanNode_t *huffmanForest);
 void            printHuffmanTable       (huffmanCode_t *huffmanCode);
+void 			dumpHuffmanTable 		(huffmanCode_t *huffmanCode,
+										char *fileName);
 void            printHuffmanForestLeaf  (huffmanNode_t *huffmanForest);
 void            evaluateCompression     (charData_t *datatable,
                                         huffmanCode_t *huffmanCode);
