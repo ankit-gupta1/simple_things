@@ -11,8 +11,8 @@
 #include "bst.h"
 
 typedef struct {
-	node_queue_t *front; /*bottom*/
-	node_queue_t *back; /*top*/
+    node_queue_t *front; /*bottom*/
+    node_queue_t *back; /*top*/
 } queue_t;
 
 void create_queue(queue_t **queue);

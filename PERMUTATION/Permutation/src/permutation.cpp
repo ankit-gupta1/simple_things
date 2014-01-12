@@ -11,10 +11,10 @@ using namespace std;
 
 void swap(char &x, char &y)
 {
-	char temp;
-	temp = x;
-	x = y;
-	y = temp;
+    char temp;
+    temp = x;
+    x = y;
+    y = temp;
 }
 
 void permute(char *a, int i, int n)
@@ -33,8 +33,8 @@ void permute(char *a, int i, int n)
 
 int main()
 {
-	   char a[] = "ABC";
-	   permute(a, 0, (sizeof(a)/sizeof(a[0])) - 2);
-	   return 0;
+       char a[] = "ABC";
+       permute(a, 0, (sizeof(a)/sizeof(a[0])) - 2);
+       return 0;
 }
 

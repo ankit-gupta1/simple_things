@@ -13,7 +13,7 @@ using namespace std;
 void create_list (list_t **list)
 {
     if (*list) {
-    	return;
+        return;
     }
 
     *list = (list_t *)malloc(sizeof(list_t));
@@ -40,7 +40,7 @@ void insert_node (list_t *list, int data)
 {
     node_t *curr_node, *new_node;
     if (!list)
-    	return;
+        return;
 
     new_node = (node_t *)malloc(sizeof(node_t));
     new_node->data = data;
@@ -63,7 +63,7 @@ void delete_node (list_t *list, int data)
     node_t *curr_node, *prev_node;
 
     if (!list)
-    	return;
+        return;
 
     prev_node = NULL;
     curr_node = list->head;

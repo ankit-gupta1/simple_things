@@ -22,17 +22,17 @@ using namespace std;
 
 int main ()
 {
-	factory_t factory;
+    factory_t factory;
 
-	factory.init_assembly();
-	factory.find_optimal_route();
-	factory.display_optimal_route();
+    factory.init_assembly();
+    factory.find_optimal_route();
+    factory.display_optimal_route();
 
 #if DEBUG
-	factory.print_service_times();
+    factory.print_service_times();
 #endif
 
-	return 0;
+    return 0;
 }
 
 

@@ -11,8 +11,8 @@
 #include "bst.h"
 
 typedef struct {
-	node_stack_t *head; /*bottom*/
-	node_stack_t *tail; /*top*/
+    node_stack_t *head; /*bottom*/
+    node_stack_t *tail; /*top*/
 } stack_t;
 
 void create_stack(stack_t **stack);

@@ -13,25 +13,25 @@ using namespace std;
 
 void create_queue(queue_t **queue)
 {
-	if (!*queue) {
-		*queue = (queue_t *)malloc(sizeof(queue_t));
-		(*queue)->front = NULL;
-		(*queue)->back = NULL;
-	}
+    if (!*queue) {
+        *queue = (queue_t *)malloc(sizeof(queue_t));
+        (*queue)->front = NULL;
+        (*queue)->back = NULL;
+    }
 }
 
 void free_queue(queue_t **queue)
 {
-	vq_t *node;
-	if(*queue) {
-		while ((*queue)->back) {
-			node = (*queue)->back;
-			(*queue)->back = node->next;
-			free(node);
-		}
-		free(*queue);
-		*queue = NULL;
-	}
+    vq_t *node;
+    if(*queue) {
+        while ((*queue)->back) {
+            node = (*queue)->back;
+            (*queue)->back = node->next;
+            free(node);
+        }
+        free(*queue);
+        *queue = NULL;
+    }
 }
 
 void enqueue(queue_t *queue, int index)
@@ -45,8 +45,8 @@ void enqueue(queue_t *queue, int index)
     new_node->next = NULL;
 
     if (!queue->front) {
-    	queue->back = new_node;
-    	queue->front = queue->back;
+        queue->back = new_node;
+        queue->front = queue->back;
     } else {
         curr_node = queue->back;
         new_node->next = curr_node;
@@ -66,14 +66,14 @@ int dequeue(queue_t *queue)
     curr_node = queue->back;
 
     if (curr_node != queue->front) {
-    	while (curr_node->next != queue->front)
-    		curr_node = curr_node->next;
+        while (curr_node->next != queue->front)
+            curr_node = curr_node->next;
 
-    	queue->front = curr_node;
-    	curr_node = curr_node->next;
+        queue->front = curr_node;
+        curr_node = curr_node->next;
     } else {
-    	queue->front = NULL;
-    	queue->back = NULL;
+        queue->front = NULL;
+        queue->back = NULL;
     }
 
     return curr_node->val;
@@ -81,25 +81,25 @@ int dequeue(queue_t *queue)
 
 void show_queue(queue_t *queue)
 {
-	vq_t *curr_node = NULL;
-	if (!queue)
-		return;
+    vq_t *curr_node = NULL;
+    if (!queue)
+        return;
 
-	curr_node = queue->back;
-	cout<<"\nQueue\n";
-	while (curr_node) {
-		cout<<curr_node->val<<"\n";
-		curr_node = curr_node->next;
-	}
+    curr_node = queue->back;
+    cout<<"\nQueue\n";
+    while (curr_node) {
+        cout<<curr_node->val<<"\n";
+        curr_node = curr_node->next;
+    }
 }
 
 int queue_front(queue_t *queue)
 {
-	if (queue) {
-		if (queue->front)
-			return queue->front->val;
-		else
-			return -1;
-	} else
-		return -1;
+    if (queue) {
+        if (queue->front)
+            return queue->front->val;
+        else
+            return -1;
+    } else
+        return -1;
 }

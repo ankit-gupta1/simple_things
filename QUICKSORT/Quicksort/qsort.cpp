@@ -97,30 +97,30 @@ int partition(qsort_t *q, int p, int r)
 
 int randomized_partition(qsort_t *q, int p, int r)
 {
-	int i;
-	int *data = q->data;
-	srand(time(NULL) + 100 + p + r);
-	i = p + (rand() % (r));
-	SWAP(data[i], data[r]);
-	return partition(q, p, r);
+    int i;
+    int *data = q->data;
+    srand(time(NULL) + 100 + p + r);
+    i = p + (rand() % (r));
+    SWAP(data[i], data[r]);
+    return partition(q, p, r);
 }
 
 
 int select_k_th(qsort_t *q, int p, int r, int k)
 {
-	int pivot, z;
-	if (p == r)
-		return q->data[p];
+    int pivot, z;
+    if (p == r)
+        return q->data[p];
 
     pivot = partition(q, p, r);
-	z = pivot - p + 1;
+    z = pivot - p + 1;
 
-	if (k == z)
-		return q->data[pivot];
-	else if (k < z)
-		return select_k_th(q, p, pivot - 1, k);
-	else
-		return select_k_th(q, pivot + 1, r, k - z);
+    if (k == z)
+        return q->data[pivot];
+    else if (k < z)
+        return select_k_th(q, p, pivot - 1, k);
+    else
+        return select_k_th(q, pivot + 1, r, k - z);
 }
 
 void quicksort(qsort_t *q, int p, int r)
