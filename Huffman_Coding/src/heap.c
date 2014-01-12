@@ -8,6 +8,14 @@
 #include "../include/heap.h"
 #include "../include/huffman.h"
 
+/*******************************************************************************
+ * Function     :   createHeap
+ * Synopsis     :   Initializes the heap data structure, assigns memory to it as
+ * 					well.
+ * Arguments    :   @heap	:	Double pointer to heap data structure.
+ * Return       :   Returns error code value if no memory is available.
+ ******************************************************************************/
+
 errCode_t createHeap (heap_t **heap)
 {
     errCode_t result;
@@ -36,6 +44,13 @@ errCode_t createHeap (heap_t **heap)
 cleanup:
     return result;
 }
+
+/*******************************************************************************
+ * Function     :   showHeap
+ * Synopsis     :   Displays the current elements queued up in heap.
+ * Arguments    :   @heap	:	Pointer to heap data structure.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void showHeap (heap_t *heap)
 {
@@ -72,6 +87,13 @@ void showHeap (heap_t *heap)
     LOG("");
 }
 
+/*******************************************************************************
+ * Function     :   deleteHeap
+ * Synopsis     :   Frees up the memory allocated to heap data structure.
+ * Arguments    :   @heap	:	Double pointer to heap data structure.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void deleteHeap (heap_t **heap)
 {
     if (!(*heap)) {
@@ -81,6 +103,15 @@ void deleteHeap (heap_t **heap)
         free(*heap);
     }
 }
+
+/*******************************************************************************
+ * Function     :   minHeapify
+ * Synopsis     :   Does the minimum heapify operation.
+ * Arguments    :   @heap	:	Double pointer to heap data structure.
+ * 					@i		:	Location in the array where heapify is to be
+ * 								performed.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void minHeapify (heap_t *heap, int i)
 {
@@ -114,6 +145,13 @@ void minHeapify (heap_t *heap, int i)
     }
 }
 
+/*******************************************************************************
+ * Function     :   buildMinHeap
+ * Synopsis     :   Builds the min Heap.
+ * Arguments    :   @heap	:	Pointer to heap data structure.
+ * Return       :   Returns invalid error code when heap is not initialized.
+ ******************************************************************************/
+
 errCode_t buildMinHeap (heap_t *heap)
 {
     int         itr;
@@ -135,6 +173,13 @@ errCode_t buildMinHeap (heap_t *heap)
 cleanup:
     return result;
 }
+
+/*******************************************************************************
+ * Function     :   extractMin
+ * Synopsis     :   Extract the topmost element in the heap.
+ * Arguments    :   @heap	:	Pointer to heap data structure.
+ * Return       :   Returns pointer to min extracted heap node.
+ ******************************************************************************/
 
 heapData_t* extractMin (heap_t *heap)
 {

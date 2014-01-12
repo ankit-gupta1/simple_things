@@ -1,5 +1,13 @@
 #include "../include/huffman.h"
 
+/*******************************************************************************
+ * Function     :   charDataTableInit
+ * Synopsis     :   This function assigns memory to the character data table. It
+ *                  also initializes the counter of each symbol to zero.
+ * Arguments    :   @dataTable  :   Pointer to uninitialized data table.
+ * Returns      :   Returns error code value.
+ ******************************************************************************/
+
 errCode_t charDataTableInit (charData_t **dataTable)
 {
     U32         itr;
@@ -21,6 +29,16 @@ errCode_t charDataTableInit (charData_t **dataTable)
 
     return result;
 }
+
+/*******************************************************************************
+ * Function     :   initHuffmanCodeTable
+ * Synopsis     :   This function initializes the table containing huffman codes
+ *                  for each symbol. It assigns memory to the huffman code
+ *                  table.
+ * Arguments    :   @huffmanCodeTable   :   Un-initialized pointer to huffman
+ *                                          code table.
+ * Return       :   Returns error code value.
+ ******************************************************************************/
 
 errCode_t initHuffmanCodeTable (huffmanCode_t **huffmanCodeTable)
 {
@@ -45,12 +63,31 @@ errCode_t initHuffmanCodeTable (huffmanCode_t **huffmanCodeTable)
     return result;
 }
 
+/*******************************************************************************
+ * Function     :   charDataTableDeInit
+ * Synopsis     :   Free's up the memory allocated to character data table.
+ * Arguments    :   dataTable   :   Populated data table pointer.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void charDataTableDeInit (charData_t **dataTable)
 {
     LOG("Freeing up character data table memory");
     free(*dataTable);
     *dataTable = NULL;
 }
+
+/*******************************************************************************
+ * Function     :   populateCharDataTable
+ * Synopsis     :   Populates the character data table. Reads each character of
+ *                  given file and increments the counter of that particular
+ *                  symbol. That way it records the frequency of characters in
+ *                  a given file.
+ * Arguments    :   @dataTable  :   Pointer to character data table.
+ *                  @fileName   :   Filename of subject file, for whom huffman
+ *                                  codes are needed to be derived.
+ * Return       :   Returns error code value.
+ ******************************************************************************/
 
 errCode_t populateCharDataTable (charData_t *dataTable, char *filename)
 {
@@ -79,6 +116,20 @@ cleanup:
     fclose(fp);
     return result;
 }
+
+/*******************************************************************************
+ * Function     :   charDataBuildMinHeap
+ * Synopsis     :   Builds the Min Heap for character data table as per their
+ *                  respective frequencies. Build Heap is efficient for this
+ *                  purpose as we will always be querying for data with minimum
+ *                  frequency or frequency sum. Therefore, we are first creating
+ *                  a Min Heap followed by populating it with character data
+ *                  table frequency. Then on applying build heap operation, our
+ *                  priority queue data structure is ready.
+ * Arguments    :   @dataTable  :   Pointer to a populated data table.
+ * Return       :   Returns the pointer to heap created. If unable to create the
+ *                  heap, returns NULL.
+ ******************************************************************************/
 
 heap_t* charDataBuildMinHeap (charData_t *dataTable)
 {
@@ -111,11 +162,28 @@ cleanup:
     return heap;
 }
 
+/*******************************************************************************
+ * Function     :   freeCharDataHeap
+ * Synopsis     :   Free's up the memory allocated to heap.
+ * Arguments    :   @heap   :   Pointer to initialized heap.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void freeCharDataHeap (heap_t *heap)
 {
     LOG("Freeing character data heap");
     deleteHeap(&heap);
 }
+
+/*******************************************************************************
+ * Function     :   createHuffmanNode
+ * Synopsis     :   Initializes an individual huffman node. This huffman node is
+ *                  created to be appended in a huffman forest. Assigns memory
+ *                  to uninitialized pointer and populates its values to zero.
+ * Arguments    :   @huffmanNode :  An uninitialized pointer to an individual
+ *                                  huffman node.
+ * Return       :   Returns error code value.
+ ******************************************************************************/
 
 errCode_t createHuffmanNode (huffmanNode_t **huffmanNode)
 {
@@ -137,6 +205,24 @@ errCode_t createHuffmanNode (huffmanNode_t **huffmanNode)
 cleanup:
     return result;
 }
+
+/*******************************************************************************
+ * Function     :   createHuffmanForest
+ * Synopsis     :   The most quintessential function. It populates and creates
+ *                  huffman tree which will be used later to extract the huffman
+ *                  codes. This function works like this. It extracts the two
+ *                  minimum frequency nodes from min heap, create a root node
+ *                  and assigns these two minimum values as left and right child
+ *                  of its root node. It also adds the frequency of its child
+ *                  and stores it as its own frequency It then pushes the
+ *                  resultant root node into the heap. It keeps on doing this
+ *                  till the min heap gets exhausted. This results into creation
+ *                  of a huffman forest. This forest or tree is important both
+ *                  in code extraction as huffman compressed data decoding.
+ * Arguments    :   @heap   :   Pointer to min heap.
+ * Return       :   Returns the root node of huffman forest. Upon failure,
+ *                  returns NULL.
+ ******************************************************************************/
 
 huffmanNode_t* createHuffmanForest (heap_t *heap)
 {
@@ -221,6 +307,13 @@ cleanup:
     return root;
 }
 
+/*******************************************************************************
+ * Function     :   freeHuffmanForest
+ * Synopsis     :   Root of the huffman forest.
+ * Arguments    :   @root   :   Root of the huffman forest.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void freeHuffmanForest (huffmanNode_t **root)
 {
     if (*root) {
@@ -232,6 +325,15 @@ void freeHuffmanForest (huffmanNode_t **root)
 
     }
 }
+
+/*******************************************************************************
+ * Function     :   printHuffmanForestLeaf
+ * Synopsis     :   Prints the leaf nodes of huffman forests. Usually helpful
+ *                  for debugging purposes as leaf nodes will always point to an
+ *                  individual character and its frequency content.
+ * Arguments    :   @root   :   Root of the huffman forest.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void printHuffmanForestLeaf (huffmanNode_t *root)
 {
@@ -246,6 +348,26 @@ void printHuffmanForestLeaf (huffmanNode_t *root)
         printHuffmanForestLeaf(root->right);
     }
 }
+
+/*******************************************************************************
+ * Function     :   populateHuffmanCode
+ * Synopsis     :   Populates Huffman Code table. This is basically a recursive
+ *                  function as for reading huffman code for any symbol. Its
+ *                  huffman code will be a series of left ('0') and right ('1')
+ *                  moves. Two get huffman code of any symbol, start from root,
+ *                  keep track of your movements while reaching for a particular
+ *                  symbol in the leaf node. Here, for generating huffman code
+ *                  of all the symbols, we are doing an inorder tree traversal.
+ *                  Whenever, function hits the leaf node, we are storing the
+ *                  required moves to reach there as its huffman code.
+ * Arguments    :   @root   :   Root of the huffman forest.
+ *                  @table  :   Pointer to the huffman code table.
+ *                  @count  :   Current level of depth in the tree.
+ *                  @code   :   It keep tracks of the current moves taken to
+ *                              reach at the current point
+ *                  @move   :   Next move to be made while traversing the tree.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void populateHuffmanCode (huffmanCode_t *table, huffmanNode_t *root,
     U32 count, char *code, huffmanMoves_t move)
@@ -280,6 +402,14 @@ void populateHuffmanCode (huffmanCode_t *table, huffmanNode_t *root,
         move = up;
 }
 
+/*******************************************************************************
+ * Function     :   createHuffmanTable
+ * Synopsis     :   Wrapper function to call the recursive function.
+ * Arguments    :   @huffmanForest  :   Root of the huffman forest.
+ *                  @huffmanCode    :   Pointer to huffman code table.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void createHuffmanTable (huffmanCode_t *huffmanCode,
     huffmanNode_t *huffmanForest)
 {
@@ -292,6 +422,13 @@ void createHuffmanTable (huffmanCode_t *huffmanCode,
     populateHuffmanCode(huffmanCode, huffmanForest, count, code, move);
 }
 
+/*******************************************************************************
+ * Function     :   freeHuffmanTable
+ * Synopsis     :   Freeing up the memory allocated to huffman code table
+ * Arguments    :   @huffmanCode    :   Pointer to huffman code table.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void freeHuffmanTable (huffmanCode_t **huffmanCode)
 {
     U32 itr;
@@ -303,6 +440,13 @@ void freeHuffmanTable (huffmanCode_t **huffmanCode)
     free(*huffmanCode);
 }
 
+/*******************************************************************************
+ * Function     :   printHuffmanTable
+ * Synopsis     :   Function to print huffman code table.
+ * Arguments    :   @huffmanCode    :   Pointer to huffman code table.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void printHuffmanTable (huffmanCode_t *huffmanCode)
 {
     U32 itr;
@@ -313,6 +457,14 @@ void printHuffmanTable (huffmanCode_t *huffmanCode)
             huffmanCode[itr].code);
 
 }
+
+/*******************************************************************************
+ * Function     :   dumpHuffmanTable
+ * Synopsis     :   Function to dump huffman code table.
+ * Arguments    :   @huffmanCode    :   Pointer to huffman code table.
+ *                  @fileName       :   Pointer to dump file name.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void dumpHuffmanTable (huffmanCode_t *huffmanCode, char *fileName)
 {
@@ -329,6 +481,13 @@ void dumpHuffmanTable (huffmanCode_t *huffmanCode, char *fileName)
     fclose(fp);
 }
 
+/*******************************************************************************
+ * Function     :   printCharDataTable
+ * Synopsis     :   Function to print character data table.
+ * Arguments    :   @dataTable  :   Pointer to character data table.
+ * Return       :   N. A.
+ ******************************************************************************/
+
 void printCharDataTable (charData_t *dataTable)
 {
     U32 itr;
@@ -338,6 +497,14 @@ void printCharDataTable (charData_t *dataTable)
         LOG("Symbol %c  index %llu", dataTable[itr].symbol,
             dataTable[itr].index);
 }
+
+/*******************************************************************************
+ * Function     :   dumpCharDataTable
+ * Synopsis     :   Function to dump character data table.
+ * Arguments    :   @dataTable  :   Pointer to character data table.
+ *                  @fileName   :   Pointer to dump file name.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void dumpCharDataTable (charData_t *dataTable, char *fileName)
 {
@@ -353,6 +520,15 @@ void dumpCharDataTable (charData_t *dataTable, char *fileName)
 
     fclose(fp);
 }
+
+/*******************************************************************************
+ * Function     :   evaluateCompression
+ * Synopsis     :   Function to evaluate the level of achievable huffman
+ *                  compression.
+ * Arguments    :   @dataTable      :   Pointer to character data table.
+ *                  @huffmanCode    :   Pointer to huffman code.
+ * Return       :   N. A.
+ ******************************************************************************/
 
 void evaluateCompression (charData_t *dataTable, huffmanCode_t *huffmanCode)
 {
