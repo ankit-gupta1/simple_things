@@ -301,7 +301,6 @@ int main()
         price[i] = ((price[i] * (BASE_MIN + (rand() % (13 - BASE_MIN)))) / 10);
     }
 
-    //bottomUpCutRodSol(price, revenue, solution, size);
     memoizedCutRodSol(price, revenue, solution, size);
     displayPriceCharacteristics(price, revenue, size);
     displaySolution(solution, size);
