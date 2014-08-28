@@ -446,7 +446,7 @@ void avl_delete_fixup(avl_tree_t *tree, avl_node_t *x, int root_bf)
 {
     avl_node_t *y = NULL;
     avl_node_t *z = NULL;
-    avl_node_t *u = NULL;
+
     bool is_rotated = false;
 
     rebase_node(x);

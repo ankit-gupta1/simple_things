@@ -32,8 +32,8 @@
 
 #define HEAP_SIZE   128
 
-typedef __uint64_t U64;
-typedef __uint32_t U32;
+typedef long long unsigned U64;
+typedef long unsigned U32;
 
 enum dataType {
     charData = 0,

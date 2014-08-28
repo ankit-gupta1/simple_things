@@ -341,8 +341,8 @@ void printHuffmanForestLeaf (huffmanNode_t *root)
         printHuffmanForestLeaf(root->left);
 
         if ((!root->left) && (!root->right)) {
-            LOG("Symbol %c index %llu", root->nodeData.symbol,
-                root->nodeData.index);
+            LOG("Symbol %c index %lu", root->nodeData.symbol,
+                (long unsigned)(root->nodeData.index));
         }
 
         printHuffmanForestLeaf(root->right);
@@ -494,8 +494,8 @@ void printCharDataTable (charData_t *dataTable)
 
     LOG("Printing CharData Table");
     for (itr = 0; itr < HEAP_SIZE; itr++)
-        LOG("Symbol %c  index %llu", dataTable[itr].symbol,
-            dataTable[itr].index);
+        LOG("Symbol %c  index %lu", dataTable[itr].symbol,
+            (long unsigned)(dataTable[itr].index));
 }
 
 /*******************************************************************************
@@ -515,8 +515,8 @@ void dumpCharDataTable (charData_t *dataTable, char *fileName)
 
     LOG("Dumping CharData Table");
     for (itr = 32; itr < HEAP_SIZE - 2; itr++)
-        fprintf(fp, "Symbol %c  index %llu \n", dataTable[itr].symbol,
-            dataTable[itr].index);
+        fprintf(fp, "Symbol %c  index %lu \n", dataTable[itr].symbol,
+        		(long unsigned)(dataTable[itr].index));
 
     fclose(fp);
 }
